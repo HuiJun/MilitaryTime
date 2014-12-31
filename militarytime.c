@@ -48,10 +48,10 @@ void makeTime( struct tm *tm_info )
     findTimeZone( offset, timezone );
 
     strftime( year_month, 24, "%b%y", tm_info );
+    strToUpper( year_month );
 
     strcpy( buffer, day_time );
     strcat( buffer, timezone );
-    strToUpper( year_month );
     strcat( buffer, year_month );
 
     puts( buffer );

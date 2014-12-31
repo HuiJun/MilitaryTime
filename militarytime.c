@@ -1,19 +1,47 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <time.h>
+#include "militarytime.h"
 
-void findTimeZone( char *offset, char *timezone );
-void strToUpper( char *text );
-
-int main( void )
+int main( int argc, char *argv[] )
 {
+    int i, c;
+    char *timezone_request;
+    extern char *optarg;
+    extern int optind, optopt;
+
     time_t timer;
     struct tm *tm_info;
-    char day_time[24], year_month[24], buffer[80];
-    char offset[6], *timezone;
 
     time( &timer );
-    tm_info = localtime( &timer );
+
+    if ( argc > 1 ) {
+        for ( i = 1; i < argc; i++ ) {
+            while ( ( c = getopt(argc, argv, ":l:" ) ) != -1 ) {
+                switch( c ) {
+                case '?':
+                    fprintf(stderr, "Unrecognized option: -%c\n", optopt);
+                    return 0;
+                default:
+                    tm_info = localtime( &timer );
+                    break;
+                }
+            }
+        }
+    } else {
+        tm_info = gmtime( &timer );
+    }
+
+    makeTime( tm_info );
+
+    return 0;
+}
+
+void makeTime( struct tm *tm_info )
+{
+    char day_time[24], year_month[24], buffer[80];
+    char offset[6], *timezone;
 
     strftime( day_time, 24, "%d%H%M", tm_info );
 
@@ -28,8 +56,6 @@ int main( void )
     strcat( buffer, year_month );
 
     puts( buffer );
-
-    return 0;
 }
 
 void strToUpper( char *text )
@@ -43,18 +69,6 @@ void strToUpper( char *text )
 
 void findTimeZone( char *offset, char *timezone ) {
     int i, compare;
-
-    const char *timezones_values[25] = {
-        "A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M",
-        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y",
-        "Z"
-    };
-
-    const char *timezones_map[25] = {
-        "+0100", "+0200", "+0300", "+0400", "+0500", "+0600", "+0700", "+0800", "+0900", "+1000", "+1100", "+1200",
-        "-0100", "-0200", "-0300", "-0400", "-0500", "-0600", "-0700", "-0800", "-0900", "-1000", "-1100", "-1200",
-        "+0000"
-    };
 
     for( i = 0; i < 25; i++ ) {
         compare = strcmp( timezones_map[i], offset );

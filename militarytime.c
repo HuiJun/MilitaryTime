@@ -6,13 +6,12 @@
 
 int main( int argc, char *argv[] )
 {
-    int i, c;
-    char *timezone_request;
+    int          i, c;
+    char        *timezone_request;
     extern char *optarg;
-    extern int optind, optopt;
-
-    time_t timer;
-    struct tm *tm_info;
+    extern int   optind, optopt;
+    time_t       timer;
+    struct tm   *tm_info;
 
     time( &timer );
 
@@ -67,12 +66,11 @@ void strToUpper( char *text )
     }
 }
 
-void findTimeZone( char *offset, char *timezone ) {
-    int i, compare;
-
+void findTimeZone( char *offset, char *timezone )
+{
+    int i;
     for( i = 0; i < 25; i++ ) {
-        compare = strcmp( timezones_map[i], offset );
-        if( !compare ) {
+        if( !strcmp( timezones_map[i], offset ) ) {
             timezone[0] = *timezones_values[i];
             timezone[1] = '\0';
         }
